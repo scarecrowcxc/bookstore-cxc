@@ -24,5 +24,9 @@ def user_register(request):
             return render(request, 'users/user_register.html', {
                 'errmsg': '参数不能为空!'
                 })
-        if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}')
+        if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', emial):
+            return render(request, 'users/user_register.html', {
+                'errmsg': '邮箱不合法！'
+                }
+
 
