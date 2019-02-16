@@ -130,6 +130,9 @@ STATICFILES_DIRS = [
 ]
 
 
+MEDIA_ROOT = os.path.join(BASE_DIR, "static")
+
+
 # 富文本编辑器配置项
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
