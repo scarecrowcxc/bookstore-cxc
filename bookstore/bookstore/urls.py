@@ -20,7 +20,9 @@ from users.views import index
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', index, name='index'),
-    url(r'^users', include('users.urls', namespace='users')),
+    url(r'^users/', include('users.urls', namespace='users')),
+    url(r'^books/', include('books.urls', namespace='books')),
     url(r'^tinymce/', include('tinymce.urls')),
+
 
 ]

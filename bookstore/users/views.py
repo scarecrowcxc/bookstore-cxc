@@ -4,6 +4,8 @@ from users.models import Passport
 from books.models import Books
 from books.enums import *
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+
 
 # Create your views here.
 def index(request):
@@ -77,3 +79,60 @@ def user_register(request):
         return redirect(reverse('index'))
 
 
+def user_login(request):
+    '''显示登录页面'''
+    if request.COOKIES.get('username'):
+        username = request.COOKIES.get('username')
+        checked = 'checked'
+    else:
+        username = ''
+        checked = ''
+    context = {
+            'username': username,
+            'checked': checked,
+    }
+
+    return render(request, 'users/user_login.html', context)
+
+def user_login_check(request):
+    '''登录功能的实现'''
+    # 1.获取数据
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    remember = request.POST.get('remember')
+
+    #2.数据校验
+    if not all([username, password, remember]):
+        # 有数据为空
+        return JsonResponse({'res': 2})
+    #3.进行处理： 根据用户名和密码查找账户信息
+    passport = Passport.objects.get_one_passport(username=username, password=password)
+
+    if passport:
+        next_url = reverse('index')
+        jres = JsonResponse({'res': 1, 'next_url': next_url})
+
+        # 判断是否需要记住用户名
+        if remember == 'true':
+            # 记住用户名
+            jres.set_cookie('username', username, max_age=7*24*3600)
+        else:
+            # 不要记住用户名
+            jres.delete_cookie('username')
+
+        # 记住用户的登录状态
+        request.session['islogin'] = True
+        request.session['username'] = username
+        request.session['passport_id'] = passport.id
+        return jres
+    else:
+        # 用户名或密码错误
+        return JsonResponse({'res': 0})
+
+
+def user_logout(request):
+    '''用户退出登录'''
+    # 清空用户的session信息
+    request.session.flush()
+    # 跳转到首页
+    return redirect(reverse('index'))
