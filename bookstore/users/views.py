@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, reverse
 import re
-from users.models import Passport
+from users.models import Passport, Address
 from books.models import Books
 from books.enums import *
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from utils.decorators import login_required
+
 
 
 # Create your views here.
@@ -136,3 +138,24 @@ def user_logout(request):
     request.session.flush()
     # 跳转到首页
     return redirect(reverse('index'))
+
+
+@login_required
+def user_center(request):
+    '''用户中心-信息页'''
+    passport_id = request.session.get('passport_id')
+    # 获取用户的基本信息
+    addr = Address.objects.get_default_address(passport_id=passport_id)
+
+    books_li = []
+
+    context = {
+            'addr': addr,
+            'page': 'user_center',
+            'books_li': books_li,
+    }
+
+    return render(request, 'users/user_center_info.html', context)
+
+
+
