@@ -39,7 +39,7 @@
                     <span>|</span>
                     <a href="{% url 'users:user_center' %}">用户中心</a>
                     <span>|</span>
-                    <a href="#">我的购物车</a>
+                    <a href="{% url 'cart:cart_show' %}">我的购物车</a>
                     <span>|</span>
                     <a href="#">我的订单</a>
                 </div>
@@ -84,7 +84,7 @@
 {# 获取用户购物车中商品的数目#}
 {% block cart_count %}
     <script>
-        $.get('/cart/count/', function(data){
+        $.get('/cart/cart_count/', function(data){
             //{'res': 商品的总数}
             $('#show_count').html(data.res)
         }) 
